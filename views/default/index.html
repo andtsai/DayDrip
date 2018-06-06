@@ -1,43 +1,136 @@
 {{extend 'layout.html'}}
 
-{{block header}}
-<center style="background-color: #333; color:white; padding:30px">
-  <h1>/{{=request.application}}/{{=request.controller}}/{{=request.function}}
-</center>
+{{block head}}
+<script src="{{=URL('static', 'js/vue.js')}}"></script>
+<script>
+  var posts_url = "{{=URL('api', 'get_posts')}}";
+  var add_post_url = "{{=URL('api', 'add_post', user_signature=True)}}";
+  var del_post_url = "{{=URL('api', 'del_post', user_signature=True)}}";
+  var toggle_public_url = "{{=URL('api','toggle_public',user_signature=True)}}";
+  var finish_edit_url = "{{=URL('api','finishEdit',user_signature=True)}}";
+</script>
 {{end}}
 
-{{if 'message' in globals():}}
-<h2>{{=message}}</h2>
-<p class="lead">{{=T('How did you get here?')}}</p>
-<ol>
-  <li>{{=T('You are successfully running web2py')}}</li>
-  <li>{{=XML(T('You visited the url %s', A(request.env.path_info,_href=request.env.path_info)))}}</li>
-  <li>{{=XML(T('Which called the function %s located in the file %s',
-    (A(request.function+'()',_href='#'),
-    A('web2py/applications/%(application)s/controllers/%(controller)s.py' % request,
-    _href=URL('admin','default','peek', args=(request.application,'controllers',request.controller+'.py'))))))}}</li>
-  <li>{{=XML(T('The output of the file is a dictionary that was rendered by the view %s',
-    A('web2py/applications/%(application)s/views/%(controller)s/index.html' % request,
-    _href=URL('admin','default','peek',args=(request.application,'views',request.controller,'index.html')))))}}</li>
-  <li>{{=T('You can modify this application and adapt it to your needs')}}</li>
-</ol>
-<center style="padding:50px">
-  <a class="btn btn-primary" href="{{=URL('admin','default','index')}}">
-    <i class="glyphicon glyphicon-cog"></i>
-    {{=T("admin")}}
-  </a>
-  <a class="btn btn-secondary" href="{{=URL('examples','default','index')}}">{{=T("Online examples")}}</a>
-  <a class="btn btn-secondary" href="http://web2py.com">web2py.com</a>
-  <a class="btn btn-secondary" href="http://web2py.com/book">{{=T('Documentation')}}</a>
-  <a class="btn btn-secondary" href="{{=URL('default','api_get_user_email')}}">{{=T('API Example')}}</a>
-  <a class="btn btn-secondary" href="{{=URL('default','grid/auth_user')}}">{{=T('Grid Example')}}</a>
-  <a class="btn btn-secondary" href="{{=URL('default','wiki')}}">{{=T('Wiki Example')}}</a>
-</center>
-{{elif 'content' in globals():}}
-{{=content}}
-{{else:}}
-{{=BEAUTIFY(response._vars)}}
-{{pass}}
+<div class="main_content">
+
+  <div id="vue-div" class="display:none">
+    <!-- Your code goes here.  Remember to call $("#vue-div").show() once you get the data for the first time. -->
+
+    <!-- Buttons -->
+    <div class="button_bar" v-if="logged_in">
+      <button v-if="!is_adding_post" class="btn rounded c6"
+              v-on:click="add_post_button()"
+              :disabled="!logged_in"
+              v-bind:class="{'disabled': !logged_in}">
+        <i class="fa fa-plus"></i> Add New Post
+      </button>
+      <button v-if="is_adding_post" class="btn rounded c4" v-on:click="add_post_button()">
+      <i class="fa fa-times"></i> Close
+      </button>
+    </div>
+
+    <!-- Form to add posts -->
+    <div v-if="is_adding_post" id="add_post_div" class="add_post_class">
+      <form action="#" v-on:submit.prevent="add_post" class="form-horizontal" enctype="multipart/form-data" method="post">
+        <div class="form-group" id="no_table_title__row">
+          <div>
+            <input class="form-control string" id="no_table_title" v-model="form_title" placeholder="Title" type="text" />
+            <span class="help-block"></span>
+          </div>
+        </div>
+        <div class="form-group" id="no_table_postContent__row">
+          <div>
+            <input class="form-control string" id="no_table_postContent" name="postContent" type="text" v-model="form_postContent" placeholder="Content"/>
+            <span class="help-block"></span>
+          </div>
+        </div>
+        <div v-if="!is_editing_post">
+          <div class="form-group" id="submit_record__row">
+            <div>
+              <input class="btn btn-primary rounded c5" id="add_post_submit" type="submit" value="Submit" />
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div v-if="is_editing_post">
+        <button v-on:click="finishEdit()">Finish Edit</button>
+    </div>
 
 
+    <div v-if="logged_in" class="result_table">
+        <h2>My Posts</h2>
+        <table class="post_table">
+          <thead>
+          <tr>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Options</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="post in myPosts">
+            <td>${post.title}</td>
+            <td>${post.postContent}</td>
+            <td>
+              <i v-if="email==post.postEmail" class="btn rounded c1 fa fa-trash-o" 
+                   v-on:click="delete_post(post._idx)"></i>
+              <i v-if="logged_in & post.is_public==false & post.postEmail==email" class="btn rounded c3 fa fa-user" 
+                  v-on:click="toggle_public(post._idx)"></i>
+              <i v-if="logged_in & post.is_public==true & post.postEmail==email" class="btn rounded c2 fa fa-users" 
+                  v-on:click="toggle_public(post._idx)"></i>
+              <i v-if="email==post.postEmail" class="btn rounded c7 fa fa-edit"
+                  v-on:click="edit_post(post._idx)"></i>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <div v-if="has_more" class="show_more">
+          <button class="btn btn-default rounded" v-on:click="get_more()">
+            <i class="fa fa-ellipsis-h"></i>
+            Load more
+          </button>
+        </div>
+      </div>
+    
+    
+    <!-- Code to display the table of posts -->
+    <div class="result_table">
+      <h2>Public Posts</h2>
+      <table class="post_table">
+        <thead>
+        <tr>
+          <th>Title</th>
+          <th>Content</th>
+          <th>Options</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="post in publicPosts">
+          <td>${post.title}</td>
+          <td>${post.postContent}</td>
+          <td>
+            <i v-if="email==post.postEmail" class="btn rounded c1 fa fa-trash-o" 
+                 v-on:click="delete_post(post._idx)"></i>
+            <i v-if="logged_in & post.is_public==false & post.postEmail==email" class="btn rounded c3 fa fa-user" 
+                v-on:click="toggle_public(post._idx)"></i>
+            <i v-if="logged_in & post.is_public==true & post.postEmail==email" class="btn rounded c2 fa fa-users" 
+                v-on:click="toggle_public(post._idx)"></i>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <div v-if="has_more" class="show_more">
+        <button class="btn btn-default rounded" v-on:click="get_more()">
+          <i class="fa fa-ellipsis-h"></i>
+          Load more
+        </button>
+      </div>
+    </div>
 
+
+  </div>
+
+</div>
+
+<script src="{{=URL('static', 'js/default_index.js')}}"></script>
