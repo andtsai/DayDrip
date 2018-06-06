@@ -18,6 +18,7 @@ db.define_table('post',
                 Field('is_public',"boolean"),
                 Field('user_email', default=get_user_email()),
                 Field('created_on', default=datetime.datetime.utcnow()),
+                Field('color')
                 )
 
 
