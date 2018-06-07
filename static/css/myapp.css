@@ -172,4 +172,11 @@ div.table_footer span.pagine.disabled i.fa {
   cursor: not-allowed;
 }
 
+.temp{
+  border-right: 1px solid transparent !important;
+  border-bottom: 1px solid transparent !important;
+  text-overflow:ellipsis;
+  word-wrap: break-word;
+}
+
 
