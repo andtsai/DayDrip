@@ -49,8 +49,8 @@ var app = function() {
         
     };
 
-    self.add_post = function (post_idx) {
-        // The submit button to add a track has been added.
+    self.add_post = function (color) {
+       
         $.post(add_post_url,
             {
                 title: self.vue.form_title,

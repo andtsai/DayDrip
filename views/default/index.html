@@ -60,36 +60,71 @@
     <div class="container center">
       <div class="third">
         <div class="container">
-          <div class="half container ">
-            <div class="card temp" style="width:500px; height: 150px;">
+          <div class="half container">
+              <div class="card temp" style="width:500px; height: 150px;">
+                  <div>  
+                    <div class="red padded rounded temp padded"><p class="front"></div>
+                    <div class="black padded rounded temp padded center">
+                      Emotion<input style="text-align: center;"type="text" v-model="form_title">
+                      Why<input style="text-align: center;"type="text" v-model="form_postContent">
+                      <button class="btn rounded a1" v-on:click="add_post('red')"><i class="black fa fa-check-circle-o" aria-hidden="true" style="font-size:20px;"> Submit</i></button>
+                    </div>
+                  </div>
+                </div>
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
               <div>  
-                <div class="red padded rounded temp padded"><p class="front"></div>
-                <div class="black padded rounded temp padded"><p class="back">555555555</p></div>
+                <div class="red padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
               </div>
             </div>
           </div>
-          <div class="half blue">
-            2
+          <div class="half container">
+              <div class="card temp" style="width:500px; height: 150px;">
+                  <div>  
+                    <div class="blue padded rounded temp padded"><p class="front"></div>
+                    <div class="black padded rounded temp padded"><p class="back">555555555</p></div>
+                  </div>
+                </div>
           </div>
         </div>
       </div>
       <div class="third">
         <div class="container">
-          <div class="half green">
-            3
+          <div class="half container">
+              <div class="card temp" style="width:500px; height: 150px;">
+                  <div>  
+                    <div class="yellow padded rounded temp padded"><p class="front"></div>
+                    <div class="black padded rounded temp padded"><p class="back">555555555</p></div>
+                  </div>
+                </div>
           </div>
-          <div class="half yellow">
-            4
+          <div class="half container">
+              <div class="card temp" style="width:500px; height: 150px;">
+                  <div>  
+                    <div class="green padded rounded temp padded"><p class="front"></div>
+                    <div class="black padded rounded temp padded"><p class="back">555555555</p></div>
+                  </div>
+                </div>
           </div>
         </div>
       </div>
       <div class="third">
         <div class="container">
-          <div class="half purple">
-            5
+          <div class="half container">
+              <div class="card temp" style="width:500px; height: 150px;">
+                  <div>  
+                    <div class="orange padded rounded temp padded"><p class="front center"></div>
+                    <div class="black padded rounded temp padded"><p class="back">555555555</p></div>
+                  </div>
+                </div>
           </div>
-          <div class="half orange">
-            6
+          <div class="half container">
+              <div class="card temp" style="width:500px; height: 150px;">
+                  <div>  
+                    <div class="purple padded rounded temp padded"><p class="front"></div>
+                    <div class="black padded rounded temp padded"><p class="back">555555555</p></div>
+                  </div>
+                </div>
           </div>
         </div>
       </div>
