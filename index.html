@@ -1,0 +1,304 @@
+{{extend 'layout.html'}}
+
+{{block head}}
+<script src="{{=URL('static', 'js/vue.js')}}"></script>
+<script>
+  var posts_url = "{{=URL('api', 'get_posts')}}";
+  var add_post_url = "{{=URL('api', 'add_post', user_signature=True)}}";
+  var del_post_url = "{{=URL('api', 'del_post', user_signature=True)}}";
+  var toggle_public_url = "{{=URL('api','toggle_public',user_signature=True)}}";
+  var finish_edit_url = "{{=URL('api','finishEdit',user_signature=True)}}";
+</script>
+{{end}}
+
+<div class="main_content">
+
+  <div id="vue-div" class="display:none">
+    <!-- Your code goes here.  Remember to call $("#vue-div").show() once you get the data for the first time. -->
+
+    <!-- Welcome page -->
+    <div v-if="!logged_in">
+      <h1 class="main_title">Welcome!</h1>
+        <p class="explanation">This site will help you organize your life by storing your checklists.
+          Please log in to use it.</p>
+      <div class="login_button">
+        <a href="{{=URL('default', 'user')}}" class="btn">Login</a>
+      </div>
+
+    <div class="container center">
+      <div class="third">
+        <div class="container">
+          <!-- Red -->
+          <div class="half container">
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>  
+                <div class="red padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+          <!-- Blue -->
+          <div class="half container">
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>  
+                <div class="blue padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="third">
+        <div class="container">
+          <!-- Yellow -->
+          <div class="half container">
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>  
+                <div class="yellow padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+         <!-- Green -->
+          <div class="half container">
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>  
+                <div class="green padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="third">
+        <div class="container">
+         <!-- Orange -->
+          <div class="half container">
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>  
+                <div class="Orange padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+         <!-- Purple -->
+          <div class="half container">
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>  
+                <div class="purple padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
+    <!-- Buttons -->
+    <div class="button_bar" v-if="logged_in">
+      <button v-if="!is_adding_post" class="btn rounded c6"
+              v-on:click="add_post_button()"
+              :disabled="!logged_in"
+              v-bind:class="{'disabled': !logged_in}">
+        <i class="fa fa-plus"></i> Add New Post
+      </button>
+      <button v-if="is_adding_post" class="btn rounded c4" v-on:click="add_post_button()">
+      <i class="fa fa-times"></i> Close
+      </button>
+    </div>
+
+    <!-- Form to add posts -->
+  <div v-if="logged_in">
+    <div v-if="is_adding_post" id="add_post_div" class="add_post_class">
+      <form action="#" v-on:submit.prevent="add_post" class="form-horizontal" enctype="multipart/form-data" method="post">
+        <div class="form-group" id="no_table_title__row">
+          <div>
+            <input class="form-control string" id="no_table_title" v-model="form_title" placeholder="Title" type="text" />
+            <span class="help-block"></span>
+          </div>
+        </div>
+        <div class="form-group" id="no_table_postContent__row">
+          <div>
+            <input class="form-control string" id="no_table_postContent" name="postContent" type="text" v-model="form_postContent" placeholder="Content"/>
+            <span class="help-block"></span>
+          </div>
+        </div>
+        <div v-if="!is_editing_post">
+          <div class="form-group" id="submit_record__row">
+            <div>
+              <input class="btn btn-primary rounded c5" id="add_post_submit" type="submit" value="Submit" />
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div v-if="is_editing_post">
+        <button v-on:click="finishEdit()">Finish Edit</button>
+    </div>
+
+    <div class="container center">
+      <div class="third">
+        <div class="container">
+          <!-- Red -->
+          <div class="half container">
+            <div class="card temp" style="width:500px; height: 150px;">
+              <div>  
+                <div class="red padded rounded temp padded"><p class="front"></div>
+                  <div class="black padded rounded temp padded center">
+                    Emotion<input style="text-align: center;"type="text" v-model="form_title">
+                    Why<input style="text-align: center;"type="text" v-model="form_postContent">
+                    <button class="btn rounded a1" v-on:click="add_post(red)"><i class="black fa fa-check-circle-o" aria-hidden="true" style="font-size:20px;"> Submit</i></button>
+                  </div>
+                </div>
+              </div>
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>
+                <div class="red padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+          <!-- Blue -->
+          <div class="half container">
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>  
+                <div class="blue padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="third">
+        <div class="container">
+          <!-- Yellow -->
+          <div class="half container">
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>  
+                <div class="yellow padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+         <!-- Green -->
+          <div class="half container">
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>  
+                <div class="green padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="third">
+        <div class="container">
+         <!-- Orange -->
+          <div class="half container">
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>  
+                <div class="Orange padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+         <!-- Purple -->
+          <div class="half container">
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>  
+                <div class="purple padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="logged_in" class="result_table">
+        <h2>My Posts</h2>
+        <table class="post_table">
+          <thead>
+          <tr>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Options</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="post in myPosts">
+            <td>${post.title}</td>
+            <td>${post.postContent}</td>
+            <td>
+              <i v-if="email==post.postEmail" class="btn rounded c1 fa fa-trash-o" 
+                   v-on:click="delete_post(post._idx)"></i>
+              <i v-if="logged_in & post.is_public==false & post.postEmail==email" class="btn rounded c3 fa fa-user" 
+                  v-on:click="toggle_public(post._idx)"></i>
+              <i v-if="logged_in & post.is_public==true & post.postEmail==email" class="btn rounded c2 fa fa-users" 
+                  v-on:click="toggle_public(post._idx)"></i>
+              <i v-if="email==post.postEmail" class="btn rounded c7 fa fa-edit"
+                  v-on:click="edit_post(post._idx)"></i>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <div v-if="has_more" class="show_more">
+          <button class="btn btn-default rounded" v-on:click="get_more()">
+            <i class="fa fa-ellipsis-h"></i>
+            Load more
+          </button>
+        </div>
+      </div>
+    
+    
+    <!-- Code to display the table of posts -->
+    <div class="result_table">
+      <h2>Public Posts</h2>
+      <table class="post_table">
+        <thead>
+        <tr>
+          <th>Title</th>
+          <th>Content</th>
+          <th>Options</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="post in publicPosts">
+          <td>${post.title}</td>
+          <td>${post.postContent}</td>
+          <td>
+            <i v-if="email==post.postEmail" class="btn rounded c1 fa fa-trash-o" 
+                 v-on:click="delete_post(post._idx)"></i>
+            <i v-if="logged_in & post.is_public==false & post.postEmail==email" class="btn rounded c3 fa fa-user" 
+                v-on:click="toggle_public(post._idx)"></i>
+            <i v-if="logged_in & post.is_public==true & post.postEmail==email" class="btn rounded c2 fa fa-users" 
+                v-on:click="toggle_public(post._idx)"></i>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <div v-if="has_more" class="show_more">
+        <button class="btn btn-default rounded" v-on:click="get_more()">
+          <i class="fa fa-ellipsis-h"></i>
+          Load more
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  </div>
+
+</div>
+
+<script src="{{=URL('static', 'js/default_index.js')}}"></script>
