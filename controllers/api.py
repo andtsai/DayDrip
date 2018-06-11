@@ -15,7 +15,8 @@ def get_posts():
                 title = r.title,
                 postContent = r.postContent,
                 is_public = r.is_public,
-                postEmail=r.user_email               
+                postEmail=r.user_email,
+                color=r.color
             )
             posts.append(t)
         else:
@@ -34,7 +35,8 @@ def add_post():
     t_id = db.post.insert(
         title = request.vars.title,
         postContent = request.vars.postContent,
-        is_public=False
+        is_public=False,
+        color = request.vars.color,
     )
     t = db.post(t_id)
     response.flash=T("New Post Added");
