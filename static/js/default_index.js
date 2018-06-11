@@ -49,14 +49,32 @@ var app = function() {
         
     };
 
-    self.add_post = function (color) {
-       
+    self.add_post = function () {
         $.post(add_post_url,
             {
                 title: self.vue.form_title,
                 postContent: self.vue.form_postContent,
+                color: document.getElementById('form_color').value,
             },
             function (data) {
+                if(document.getElementById('form_color').value == "red") {
+                    
+                }                
+                if(document.getElementById('form_color').value == "blue") {
+                    self.vue.form_color="blue";
+                }  
+                if(document.getElementById('form_color').value == "yellow") {
+                    self.vue.form_color="yellow";
+                }                
+                if(document.getElementById('form_color').value == "green") {
+                    self.vue.form_color="green";
+                }  
+                if(document.getElementById('form_color').value == "orange") {
+                    self.vue.form_color="orange";
+                }                
+                if(document.getElementById('form_color').value == "purple") {
+                    self.vue.form_color="purple";
+                }  
                 $.web2py.enableElement($("#add_post_submit"));
                 self.vue.posts.unshift(data.post);
                 enumerate(self.vue.posts);
@@ -65,7 +83,11 @@ var app = function() {
                 self.get_posts();
             });
         self.get_posts();
+        console.log(self.vue.form_title);
+        console.log(self.vue.form_postContent);        
+        console.log(document.getElementById('form_color').value);
     };
+
 
     self.delete_post = function(post_idx) {
         $.post(del_post_url,
@@ -119,31 +141,33 @@ var app = function() {
         data: {
             is_adding_post: false,
             posts: [],
+            
             logged_in: false,
             has_more: false,
             form_title: null,
             form_postContent: null,
+            form_color: null,
             is_editing_post: false,
-            tempid:null,
+            tempid: null,
         },
         computed:{
             publicPosts: function(){
-                return this.posts.filter(function(u){
-                    return u.is_public
+                return this.posts.filter(function (u){
+                    return u.is_public;
                 })
             },
             myPosts: function(){
                 return this.posts.filter(function (p){
                     return p.postEmail==self.vue.email;
                 })
-            }
-
+            },
 
         },
         methods: {
             get_more: self.get_more,
             add_post_button: self.add_post_button,
             add_post: self.add_post,
+            get_color: self.get_color,
             delete_post: self.delete_post,
             toggle_public: self.toggle_public,
             edit_post: self.edit_post,
