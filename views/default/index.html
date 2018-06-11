@@ -16,6 +16,90 @@
   <div id="vue-div" class="display:none">
     <!-- Your code goes here.  Remember to call $("#vue-div").show() once you get the data for the first time. -->
 
+    <!-- Welcome page -->
+    <div v-if="!logged_in">
+      <h1 class="main_title">Welcome!</h1>
+        <p class="explanation">This site will help you organize your life by storing your checklists.
+          Please log in to use it.</p>
+      <div class="login_button">
+        <a href="{{=URL('default', 'user')}}" class="btn">Login</a>
+      </div>
+
+    <div class="container center">
+      <div class="third">
+        <div class="container">
+          <!-- Red -->
+          <div class="half container">
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>  
+                <div class="red padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+          <!-- Blue -->
+          <div class="half container">
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>  
+                <div class="blue padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="third">
+        <div class="container">
+          <!-- Yellow -->
+          <div class="half container">
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>  
+                <div class="yellow padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+         <!-- Green -->
+          <div class="half container">
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>  
+                <div class="green padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="third">
+        <div class="container">
+         <!-- Orange -->
+          <div class="half container">
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>  
+                <div class="Orange padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+         <!-- Purple -->
+          <div class="half container">
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div>  
+                <div class="purple padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
     <!-- Buttons -->
     <div class="button_bar" v-if="logged_in">
       <button v-if="!is_adding_post" class="btn rounded c6"
@@ -30,6 +114,7 @@
     </div>
 
     <!-- Form to add posts -->
+  <div v-if="logged_in">
     <div v-if="is_adding_post" id="add_post_div" class="add_post_class">
       <form action="#" v-on:submit.prevent="add_post" class="form-horizontal" enctype="multipart/form-data" method="post">
         <div class="form-group" id="no_table_title__row">
@@ -57,74 +142,144 @@
         <button v-on:click="finishEdit()">Finish Edit</button>
     </div>
 
+    <!-- Memos -->
     <div class="container center">
       <div class="third">
         <div class="container">
+          <!-- Red -->
           <div class="half container">
-              <div class="card temp" style="width:500px; height: 150px;">
-                  <div>  
-                    <div class="red padded rounded temp padded"><p class="front"></div>
-                    <div class="black padded rounded temp padded center">
-                      Emotion<input style="text-align: center;"type="text" v-model="form_title">
-                      Why<input style="text-align: center;"type="text" v-model="form_postContent">
-                      <button class="btn rounded a1" v-on:click="add_post('red')"><i class="black fa fa-check-circle-o" aria-hidden="true" style="font-size:20px;"> Submit</i></button>
-                    </div>
-                  </div>
-                </div>
-            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+            <div class="card temp" style="width:500px; height: 200px;">
               <div>  
+                <div class="red padded rounded temp padded"><p class="front" style="text-align: center;">Add Memo</div>
+                  <div class="black padded rounded temp padded center">
+                    Emotion<input style="text-align: center;"type="text" v-model="form_title">
+                    Why<input style="text-align: center;"type="text" v-model="form_postContent">
+                    Color<select id="form_color">
+                      <option value="red" id="red">Red</option>
+                      <option value="blue" id="blue">Blue</option>
+                      <option value="yellow" id="yellow">Yellow</option>
+                      <option value="green" id="green">Green</option>
+                      <option value="orange" id="orange">Orange</option>
+                      <option value="purple" id="purple">Purple</option>
+                    </select>
+                    <button class="btn rounded a1" v-on:click="add_post()"><i class="black fa fa-check-circle-o" aria-hidden="true" style="font-size:20px;"> Submit</i></button>
+                  </div>
+              </div>
+            </div>
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div v-if="post.color=='red'">  
                 <div class="red padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
                 <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
               </div>
             </div>
           </div>
+
+          <!-- Blue -->
           <div class="half container">
-              <div class="card temp" style="width:500px; height: 150px;">
-                  <div>  
-                    <div class="blue padded rounded temp padded"><p class="front"></div>
-                    <div class="black padded rounded temp padded"><p class="back">555555555</p></div>
+            <div class="card temp" style="width:500px; height: 150px;">
+              <div>  
+                <div class="blue padded rounded temp padded"><p class="front" style="text-align: center;">Add Memo</div>
+                  <div class="black padded rounded temp padded center">
+                    Emotion<input style="text-align: center;"type="text" v-model="form_title">
+                    Why<input style="text-align: center;"type="text" v-model="form_postContent">
+                    <button class="btn rounded a1" v-on:click="add_post('blue')"><i class="black fa fa-check-circle-o" aria-hidden="true" style="font-size:20px;"> Submit</i></button>
                   </div>
-                </div>
+              </div>
+            </div>
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div v-if="post.color=='blue'">  
+                <div class="blue padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
           </div>
+
         </div>
       </div>
+      <!-- Yellow -->
       <div class="third">
         <div class="container">
+          <!-- Yellow -->
           <div class="half container">
-              <div class="card temp" style="width:500px; height: 150px;">
-                  <div>  
-                    <div class="yellow padded rounded temp padded"><p class="front"></div>
-                    <div class="black padded rounded temp padded"><p class="back">555555555</p></div>
+            <div class="card temp" style="width:500px; height: 150px;">
+              <div>  
+                <div class="yellow padded rounded temp padded"><p class="front" style="text-align: center;">Add Memo</div>
+                  <div class="black padded rounded temp padded center">
+                    Emotion<input style="text-align: center;"type="text" v-model="form_title">
+                    Why<input style="text-align: center;"type="text" v-model="form_postContent">
+                    <button class="btn rounded a1" v-on:click="add_post('yellow')"><i class="black fa fa-check-circle-o" aria-hidden="true" style="font-size:20px;"> Submit</i></button>
                   </div>
-                </div>
+              </div>
+            </div>
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div v-if="post.color=='yellow'">  
+                <div class="yellow padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}${post.color}</p></div>
+              </div>
+            </div>
           </div>
+         <!-- Green -->
           <div class="half container">
-              <div class="card temp" style="width:500px; height: 150px;">
-                  <div>  
-                    <div class="green padded rounded temp padded"><p class="front"></div>
-                    <div class="black padded rounded temp padded"><p class="back">555555555</p></div>
+            <div class="card temp" style="width:500px; height: 150px;">
+              <div>  
+                <div class="green padded rounded temp padded"><p class="front" style="text-align: center;">Add Memo</div>
+                  <div class="black padded rounded temp padded center">
+                    Emotion<input style="text-align: center;"type="text" v-model="form_title">
+                    Why<input style="text-align: center;"type="text" v-model="form_postContent">
+                    <button class="btn rounded a1" v-on:click="add_post('green')"><i class="black fa fa-check-circle-o" aria-hidden="true" style="font-size:20px;"> Submit</i></button>
                   </div>
-                </div>
+              </div>
+            </div>
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div v-if="post.color=='green'">   
+                <div class="green padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}${post.color}</p></div>
+              </div>
+            </div>
           </div>
+
         </div>
       </div>
+
       <div class="third">
         <div class="container">
+         <!-- Orange -->
           <div class="half container">
-              <div class="card temp" style="width:500px; height: 150px;">
-                  <div>  
-                    <div class="orange padded rounded temp padded"><p class="front center"></div>
-                    <div class="black padded rounded temp padded"><p class="back">555555555</p></div>
+            <div class="card temp" style="width:500px; height: 150px;">
+              <div>  
+                <div class="orange padded rounded temp padded"><p class="front" style="text-align: center;">Add Memo</div>
+                  <div class="black padded rounded temp padded center">
+                    Emotion<input style="text-align: center;"type="text" v-model="form_title">
+                    Why<input style="text-align: center;"type="text" v-model="form_postContent">
+                    <button class="btn rounded a1" v-on:click="add_post('orange')"><i class="black fa fa-check-circle-o" aria-hidden="true" style="font-size:20px;"> Submit</i></button>
                   </div>
-                </div>
+              </div>
+            </div>
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div v-if="post.color=='orange'">  
+                <div class="Orange padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
           </div>
+         <!-- Purple -->
           <div class="half container">
-              <div class="card temp" style="width:500px; height: 150px;">
-                  <div>  
-                    <div class="purple padded rounded temp padded"><p class="front"></div>
-                    <div class="black padded rounded temp padded"><p class="back">555555555</p></div>
+            <div class="card temp" style="width:500px; height: 150px;">
+              <div>  
+                <div class="purple padded rounded temp padded"><p class="front" style="text-align: center;">Add Memo</div>
+                  <div class="black padded rounded temp padded center">
+                    Emotion<input style="text-align: center;"type="text" v-model="form_title">
+                    Why<input style="text-align: center;"type="text" v-model="form_postContent">
+                    <button class="btn rounded a1" v-on:click="add_post('purple')"><i class="black fa fa-check-circle-o" aria-hidden="true" style="font-size:20px;"> Submit</i></button>
                   </div>
-                </div>
+              </div>
+            </div>
+            <div v-for="post in posts" class="card temp" style="width:500px; height: 150px; margin-top:16px;">
+              <div v-if="post.color=='purple'">  
+                <div class="purple padded rounded temp padded"><p class="front center" style="padding-top:55px">${post.title}</div>
+                <div class="black padded rounded temp padded"><p class="back">${post.postContent}</p></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -200,6 +355,7 @@
       </div>
     </div>
 
+  </div>
 
   </div>
 
